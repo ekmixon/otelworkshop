@@ -15,15 +15,13 @@ tracer = trace.get_tracer(__name__)
 def move_right():
     x = player.xcor()
     x = x + playerspeed
-    if x > 280:
-        x = 280
+    x = min(x, 280)
     player.setx(x)
 
 def move_left():
     x = player.xcor()
     x = x - playerspeed
-    if x < -280:
-        x = -280
+    x = max(x, -280)
     player.setx(x)
 
 def leave_game():
@@ -43,10 +41,7 @@ def fire_bullet():
 
 def is_collision(obj1, obj2):
     distance = math.sqrt((obj1.xcor() - obj2.xcor()) ** 2 + (obj1.ycor() - obj2.ycor()) ** 2)
-    if distance < 15:
-        return True
-    else:
-        return False
+    return distance < 15
 
 # Set up the screen
 wn = turtle.Screen()
@@ -68,7 +63,7 @@ border_pen.pensize(3)
 border_pen.up()
 border_pen.goto(-300, -300)
 border_pen.down()
-for side in range(4):
+for _ in range(4):
     border_pen.forward(600)
     border_pen.left(90)
 
@@ -81,7 +76,7 @@ score_pen.speed(0)
 score_pen.color("white")
 score_pen.up()
 score_pen.goto(-290, 250)
-score_string = "Score: {}".format(score)
+score_string = f"Score: {score}"
 score_pen.write(score_string, False, align="left", font=("Arial", 14, "normal"))
 score_pen.hideturtle()
 
@@ -100,12 +95,7 @@ playerspeed = 15
 number_of_enemies = 5
 
 # Create an empty list of enemies
-enemies = []
-
-# Add enemies to list
-for i in range(number_of_enemies):
-    # Create enemy
-    enemies.append(turtle.Turtle())
+enemies = [turtle.Turtle() for _ in range(number_of_enemies)]
 
 for enemy in enemies:
     enemy.color("red")
@@ -191,7 +181,7 @@ while True:
             enemy.goto(x, y)
             # Update the score
             score += 10
-            score_string = "Score: {}".format(score)
+            score_string = f"Score: {score}"
             score_pen.clear()
             score_pen.write(score_string, False, align="left", font=("Arial", 14, "normal"))
             # with tracer create a span
